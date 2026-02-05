@@ -1,86 +1,58 @@
-# Crypto Trader Performance vs Market Sentiment Analysis
+# Trader Performance vs Market Sentiment
 
-Analysis of how Bitcoin market sentiment (Fear/Greed) relates to trader behavior and performance on Hyperliquid.
+An analysis of how Bitcoin market sentiment relates to trading behavior and outcomes on Hyperliquid.
 
-## Overview
+## Key Insights
 
-This project explores the relationship between the Bitcoin Fear & Greed Index and the trading patterns/performance of Hyperliquid traders. The goal is to uncover actionable patterns that could inform trading strategies or risk controls.
+- **Fear days are more profitable**: Mean daily PnL on Fear days ($9,388) exceeds Greed days ($5,415) by 73%, though with higher variance.
+- **Traders lean long during fear**: The long/short ratio increases from 1.49 on Greed days to 2.48 on Fear days, indicating contrarian positioning.
+- **Activity spikes during fear**: Trade frequency rises to 85 trades/day during Fear vs 58 during Greed, suggesting opportunistic behavior.
+- **Win rate favors greed, but magnitude favors fear**: Greed days show slightly higher win rates (34% vs 32%), but Fear days produce larger gains per winning trade.
+
+## Strategy Implications
+
+1. **Position sizing should increase during Fear periods** for traders with positive historical expectancy. The data suggests Fear creates favorable asymmetry — higher potential returns despite lower win rates.
+
+2. **Frequent traders should reduce per-trade size on Fear days** to manage cumulative variance. High activity combined with elevated volatility increases drawdown risk.
 
 ## Project Structure
 
 ```
 ├── data/
-│   ├── fear_greed_index.csv     # Bitcoin Fear/Greed Index data
-│   └── historical_data.csv       # Hyperliquid trader data
+│   ├── fear_greed_index.csv     # Bitcoin Fear/Greed Index (2,644 days)
+│   └── historical_data.csv       # Hyperliquid trades (~211,000 records)
 ├── notebooks/
 │   └── analysis.ipynb            # Main analysis notebook
 ├── outputs/
 │   ├── charts/                   # Generated visualizations
-│   ├── processed_analysis_data.csv
-│   └── trader_profiles.csv
-├── requirements.txt              # Python dependencies
-├── README.md                     # This file
-└── summary.md                    # Key findings and recommendations
+│   └── *.csv                     # Processed datasets
+├── summary.md                    # Detailed findings
+├── requirements.txt
+└── README.md
 ```
 
-## Setup Instructions
-
-### 1. Install Dependencies
+## Setup
 
 ```bash
 pip install -r requirements.txt
-```
-
-### 2. Data Preparation
-
-Place the following files in the `data/` directory:
-- `fear_greed_index.csv` - Bitcoin Fear/Greed Index
-- `historical_data.csv` - Hyperliquid historical trades
-
-### 3. Run the Analysis
-
-```bash
-cd notebooks
-jupyter notebook analysis.ipynb
-```
-
-Or run via command line:
-```bash
-jupyter nbconvert --to notebook --execute notebooks/analysis.ipynb
+jupyter notebook notebooks/analysis.ipynb
 ```
 
 ## Methodology
 
-1. **Data Preparation**: Load and clean both datasets, handle missing values and duplicates
-2. **Timestamp Alignment**: Convert all timestamps to consistent datetime format and align at daily level
-3. **Metric Creation**: Compute daily PnL, win rate, trade frequency, position sizes, and long/short ratios per trader
-4. **Sentiment Analysis**: Compare performance and behavior between Fear and Greed days
-5. **Segmentation**: Categorize traders by frequency, position size, and consistency
-6. **Insights**: Generate evidence-backed findings and actionable recommendations
+1. Aligned Fear/Greed Index with trade data at daily granularity
+2. Computed per-trader metrics: PnL, win rate, trade frequency, position size, long/short ratio
+3. Segmented traders by activity level, position size, and consistency
+4. Compared performance and behavior across sentiment conditions
 
-## Key Metrics Analyzed
+## Data Summary
 
-| Metric | Description |
-|--------|-------------|
-| Daily PnL | Sum of closed profit/loss per trader per day |
-| Win Rate | Percentage of profitable trades |
-| Trade Frequency | Number of trades per day |
-| Average Trade Size | Mean position size in USD |
-| Long/Short Ratio | Ratio of long to short positions |
+| Dataset | Records | Date Range |
+|---------|---------|------------|
+| Fear/Greed Index | 2,644 days | 2018–2025 |
+| Hyperliquid Trades | 211,225 | Aligned overlap |
+| Final Analysis Set | 530 trader-days | — |
 
-## Key Findings
+---
 
-See `summary.md` for detailed findings and strategy recommendations.
-
-## Dependencies
-
-- pandas >= 2.0.0
-- numpy >= 1.24.0
-- matplotlib >= 3.7.0
-- seaborn >= 0.12.0
-- scipy >= 1.10.0
-- jupyter >= 1.0.0
-
-## Author
-
-Data Science Intern - Primetrade.ai
+See [summary.md](summary.md) for detailed findings and methodology notes.

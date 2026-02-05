@@ -1,103 +1,91 @@
-# Analysis Summary: Trader Performance vs Market Sentiment
+# Trader Behavior & Performance Under Different Sentiment Regimes
+
+## Overview
+
+This analysis examines whether Bitcoin market sentiment (as measured by the Fear & Greed Index) correlates with measurable differences in trading behavior and outcomes on Hyperliquid. The goal is to identify patterns that could inform position sizing, risk controls, or participation decisions.
+
+The analysis uses 211,225 trade records aligned with 2,644 days of sentiment data, yielding 530 trader-day observations across the overlapping period.
+
+---
 
 ## Methodology
 
-### Data Sources
-1. **Bitcoin Fear & Greed Index**: 2,644 daily observations (2018-2025)
-2. **Hyperliquid Trader Data**: ~211,000 trade records across multiple accounts
+**Data alignment**: Both datasets were aligned at daily granularity. This is the natural resolution for the Fear/Greed Index and allows direct comparison of aggregate behavior across sentiment conditions.
 
-### Analysis Period
-After alignment: **530 trader-day observations** with sentiment data (340 Greed days, 190 Fear days)
+**Metric construction**: For each trader-day, the following metrics were computed:
+- Total PnL (sum of closed positions)
+- Win rate (fraction of profitable trades)
+- Trade count
+- Average position size
+- Long/short ratio
 
-### Approach
-- Aligned datasets at daily granularity (Fear/Greed Index is daily)
-- Created per-trader-per-day metrics: PnL, win rate, trade count, position size, long/short ratio
-- Segmented traders into groups (frequent/infrequent, large/small positions, consistent/inconsistent)
-- Applied Mann-Whitney U tests for statistical validation
+**Segmentation**: Traders were grouped by activity level (frequent vs infrequent), position size (large vs small), and consistency (low vs high PnL variance). These segments allow us to test whether sentiment effects differ across trader profiles.
 
----
-
-## Key Insights
-
-### Insight 1: Counter-Intuitive Fear Day Performance
-
-**Finding**: Traders achieve **higher mean PnL on Fear days** ($9,388 vs $5,415 on Greed days).
-
-| Metric | Fear Days | Greed Days |
-|--------|-----------|------------|
-| Mean Daily PnL | $9,387.50 | $5,415.24 |
-| Median Daily PnL | $229.99 | $128.64 |
-| PnL Std Dev | $50,957 | $38,165 |
-
-**Implication**: Fear days, despite negative market sentiment, present profitable opportunities — but with higher variance. This suggests either contrarian strategies work, or volatility during fear creates larger profit potential for skilled traders.
+**Statistical validation**: Differences between Fear and Greed conditions were tested using Mann-Whitney U tests, which are appropriate for non-normally distributed financial data.
 
 ---
 
-### Insight 2: Aggressive Long Bias During Fear
+## Findings
 
-**Finding**: Traders maintain a **higher long/short ratio during Fear (2.48) vs Greed (1.49)**.
+### 1. Fear days produce higher average PnL
 
-| Metric | Fear Days | Greed Days |
-|--------|-----------|------------|
-| Long/Short Ratio | 2.48 | 1.49 |
-| Trade Frequency | 85.2/day | 57.9/day |
+Traders earned a mean daily PnL of $9,388 on Fear days, compared to $5,415 on Greed days — a 73% difference. The median shows a similar pattern ($230 vs $129), suggesting this is not purely driven by outliers.
 
-**Implication**: This is a contrarian signal — traders are buying the dip during fear periods. The higher trade frequency on Fear days confirms increased activity, possibly opportunistic accumulation.
+However, PnL volatility is also higher on Fear days (standard deviation of $50,957 vs $38,165). This indicates that while the expected return is better, the dispersion of outcomes is wider.
 
----
+**Interpretation**: Fear periods may present favorable entry points for traders willing to accept higher variance. The contrarian nature of buying during fear appears to pay off on average, but with meaningful risk.
 
-### Insight 3: Win Rate Slightly Favors Greed Days
+### 2. Traders position aggressively long during fear
 
-**Finding**: Win rate is marginally higher during Greed (34.3% vs 31.9%).
+The long/short ratio rises from 1.49 on Greed days to 2.48 on Fear days. This is a nearly 70% increase in relative long exposure.
 
-**Implication**: While Greed days have better hit rates, the higher PnL on Fear days suggests larger wins compensate for lower win rates. Risk-adjusted return matters more than win rate alone.
+At the same time, trade frequency increases from 58 to 85 trades per day on Fear days. Traders are not only leaning long — they are trading more actively.
 
----
+**Interpretation**: This behavior is consistent with opportunistic accumulation. Traders appear to view fear as a buying opportunity rather than a signal to reduce exposure. The elevated activity suggests conviction, not just positioning.
 
-### Insight 4: Low Correlation Between Sentiment and Outcomes
+### 3. Win rate is slightly lower on fear days, but gains are larger
 
-**Finding**: Sentiment index value shows near-zero correlation with both PnL (-0.006) and win rate (0.061).
+Win rates are marginally lower during Fear (31.9%) compared to Greed (34.3%). However, this does not translate into worse overall performance.
 
-**Implication**: The binary Fear/Greed classification reveals patterns that the raw index value obscures. Traders should focus on categorical sentiment states rather than fine-grained index readings.
+The higher mean and median PnL on Fear days implies that winning trades are larger, compensating for the lower hit rate. This is consistent with a volatility-driven return profile: when prices move more, correct bets pay better.
 
----
+**Interpretation**: Evaluating traders purely by win rate would understate their Fear-day performance. Risk-adjusted metrics that account for magnitude are more appropriate.
 
-## Strategy Recommendations
+### 4. Sentiment intensity matters less than category
 
-### Recommendation 1: Opportunistic Fear Day Participation
+Correlations between the raw Fear/Greed index value and performance metrics are near zero (PnL: -0.006, win rate: 0.061). The binary Fear/Greed classification reveals patterns that the continuous index obscures.
 
-**Rule**: Increase position sizing by 10-20% during Fear periods for traders with proven positive expectancy.
-
-**Rationale**: Higher mean and median PnL on Fear days suggests favorable risk/reward. The contrarian long bias already in the data indicates smart money is buying fear.
-
-**Risk Control**: Set tighter stops (e.g., reduce max loss threshold by 15%) to manage the higher variance.
+**Interpretation**: For practical use, sentiment should be treated as a regime indicator (Fear vs Greed) rather than a continuous signal. Threshold-based rules are likely more effective than linear models.
 
 ---
 
-### Recommendation 2: Frequency-Based Risk Adjustment
+## Practical Implications
 
-**Rule**: 
-- **Frequent traders**: Reduce average position size by 20% during Fear days (already high activity = higher cumulative risk)
-- **Infrequent traders**: Slightly increase position sizes on Fear days (fewer bets should be larger when odds favor)
+### Recommendation 1: Increase exposure during Fear
 
-| Trader Type | Fear Day Adjustment | Greed Day Adjustment |
-|-------------|--------------------|--------------------|
-| Frequent (>85 trades/day) | -20% size, maintain frequency | Normal sizing |
-| Infrequent (<58 trades/day) | +15% size, higher selectivity | Normal sizing |
+For traders with demonstrated positive expectancy, Fear periods offer a favorable risk/reward tradeoff. The data supports increasing position sizes by 15–20% during Fear, with tighter stops to manage the elevated variance.
 
-**Rationale**: The data shows frequent traders are already very active during Fear periods (85 trades/day). Position sizing adjustments prevent over-exposure while capturing the favorable conditions.
+This recommendation applies most strongly to infrequent traders, who take fewer but more deliberate positions.
+
+### Recommendation 2: Frequent traders should reduce per-trade size on Fear days
+
+High-frequency traders already increase their activity during Fear (85 vs 58 trades/day). The cumulative risk from this elevated activity, combined with higher per-trade variance, warrants reducing individual position sizes.
+
+A 15–20% reduction in per-trade size would help maintain overall risk exposure while still participating in favorable conditions.
 
 ---
 
 ## Limitations
 
-1. **No leverage data** — cannot segment by leverage usage
-2. **Daily granularity** — intraday patterns are masked
-3. **Bitcoin-focused sentiment** — applied to all traded assets
-4. **Survivorship bias** — only accounts with recorded trades analyzed
+- **No leverage data available**: Segmentation by leverage usage was not possible.
+- **Daily resolution only**: Intraday patterns may differ and are not captured here.
+- **Sentiment index is Bitcoin-focused**: Applied uniformly to all traded assets.
+- **Survivorship bias**: Only accounts with recorded trades were included.
+
+---
 
 ## Next Steps
 
-1. Implement proposed rules in a backtesting framework
-2. Add intraday sentiment data for higher-frequency signals
-3. Test lagged effects (does yesterday's sentiment predict today's performance?)
+1. Test the proposed sizing rules in a backtesting framework with realistic transaction costs.
+2. Explore lagged sentiment effects — does today's Fear/Greed predict tomorrow's performance?
+3. Incorporate intraday sentiment data when available for higher-frequency signal generation.
